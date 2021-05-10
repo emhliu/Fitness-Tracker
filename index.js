@@ -1,10 +1,13 @@
+'use strict'
+
 const express = require('express');
 const passport = require('passport');
 const cookieSession = require('cookie-session');
 
 const GoogleStrategy = require('passport-google-oauth20');
 
-
+// our database operations
+const dbo = require('./databaseOps.js');
 
 // Google login credentials, used when the user contacts
 // Google, to tell them where he is trying to login to, and show
@@ -14,6 +17,7 @@ const GoogleStrategy = require('passport-google-oauth20');
 // server162.site:[port]/auth/redirect
 const hiddenClientID = process.env['ClientID']
 const hiddenClientSecret = process.env['ClientSecret']
+let usrProfile;
 
 // An object giving Passport the data Google wants for login.  This is 
 // the server's "note" to Google.
@@ -37,6 +41,9 @@ passport.use(new GoogleStrategy(googleLoginData, gotProfile) );
 
 // app is the object that implements the express server
 const app = express();
+
+// use this instead of the older body-parser
+app.use(express.json());
 
 // pipeline stage that just echos url, for debugging
 app.use('/', printURL);
@@ -123,6 +130,70 @@ app.get('/query', isAuthenticated,
       console.log("saw query");
       res.send('HTTP query!') });
 
+var offset = 0;
+app.post('/timezone', isAuthenticated,
+  function(request, response, next) {
+    /*console.log(request.body);*/
+    response.send({
+      message: "I recieved your POST request at /timezone"
+    });
+    offset = request.body.offset;
+  });
+
+//GET request /reminder
+app.get('/reminder', isAuthenticated,
+  function(request, response, next){
+    console.log("received GET request for /reminder");
+    dbo.getReminder(offset)
+    .then(function(data){
+      response.send(data);
+    }) 
+    .catch(function(error){
+        console.log("error:", error);}
+    );
+  });
+
+// handle Activity post requests
+app.post('/store', isAuthenticated,
+  function(request, response, next) {
+    console.log(
+      "Server recieved a post request /store with body: ",
+      request.body
+    );
+    response.send({
+      message: "I recieved your POST request at /store"
+    });
+    //insert data received into database as a row
+    console.log(offset);
+    if(request.body.scalar === undefined){ //is future activity
+      dbo.insertActivity(request.body.date, request.body.activity, -1, offset).catch(
+      function (error) {
+      console.log("error:",error);}
+      );
+    } else{ //is past activity
+        dbo.insertActivity(request.body.date, request.body.activity, request.body.scalar, offset).catch(
+        function (error) {
+        console.log("error:",error);}
+      );
+    }
+  });  
+
+// GET chart info
+app.get('/week', isAuthenticated,
+  function(request, response){
+    //extract query parameters
+    let date = request.query.date;
+    let activity = request.query.activity;
+    //get info from database
+    dbo.getChartData(date, activity) 
+    .then(function(data){
+      response.send(data)
+    })
+    .catch(function(error){
+        console.log("error:", error);}
+    );
+  });
+
 // finally, file not found, if we cannot handle otherwise.
 app.use( fileNotFound );
 
@@ -130,7 +201,6 @@ app.use( fileNotFound );
 const listener = app.listen(3000, () => {
   console.log("The static server is listening on port " + listener.address().port);
 });
-
 
 // middleware functions called by some of the functions above. 
 
@@ -177,7 +247,7 @@ function gotProfile(accessToken, refreshToken, profile, done) {
     // and to store him in DB if not already there. 
     // Second arg to "done" will be passed into serializeUser,
     // should be key to get user out of database.
-    usrProfile = profile; //used after return from gotProfile to display name on hidden page
+    usrProfile = profile; //global var: used to display name on hidden page
     let userid = profile.id;  
     console.log("userId: "+profile.displayName);
 
