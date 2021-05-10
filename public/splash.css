@@ -1,0 +1,75 @@
+body {
+  font-family: "Open Sans", sans-serif;
+  background-color: #333333;
+  /*min-height: 100vh;*/
+}
+
+header {
+  background-color: #f2f2f2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  max-width: 290px;
+  margin: 30px;
+}
+
+main {
+  margin: auto; /* to center */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  max-width: 700px;
+}
+
+#workoutImage {
+  width: 200px;
+  margin-top: 30px;
+}
+
+#white-logo {
+  width: 200px;
+  margin: 30px;
+}
+
+#welcome {
+  color: #53e0cd;
+  font-weight: bold;
+  margin: 40px;
+}
+
+#log-in {
+  color: #f2f2f2;
+  margin-top: 20px;
+}
+
+#google-signin {
+  width: 200px;
+  margin: 10px;
+}
+
+/* at tablet, change to horizontal */
+@media only screen and (min-width: 768px){ 
+  body {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(90deg, #f2f2f2 50%, #333333 50%);
+  }
+  header {
+    background-color: inherit;
+    width: 50%;
+  }
+  main {
+    background-color: inherit;
+    width: 50%;
+  }
+  #workoutImage {
+    width: 300px;
+  }
+}

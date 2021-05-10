@@ -72,6 +72,11 @@ app.get("/", (request, response) => {
 
 app.get('/*',express.static('public'));
 
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
+
 // next, handler for url that starts login with Google.
 // The app (in public/login.html) redirects to here 
 // (it's a new page, not an AJAX request!)
@@ -120,8 +125,6 @@ app.get('/*',
 	// serving files that start with /user from here gets them from ./
 	express.static('user') 
        ); 
-
-
 
 // next, put all queries (like store or reminder ... notice the isAuthenticated 
 // middleware function; queries are only handled if the user is logged in

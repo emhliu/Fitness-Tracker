@@ -24,6 +24,19 @@ nav {
   color: white;
   font-weight: 600;
   font-size: 1.7rem;
+  /*display: flex;*/
+}
+
+#logo-white {
+  width: 130px;
+}
+
+#log-out {
+  font-size: 80%;
+  background-color: #333333;
+  color: #f2f2f2;
+  float: right;
+  padding-top: 5px;
 }
 
 header {
