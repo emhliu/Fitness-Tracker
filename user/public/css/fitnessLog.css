@@ -1,0 +1,384 @@
+body {
+  font-family: "Open Sans", sans-serif;
+  background-color: #f2f2f2;
+  min-width: 350px;
+}
+
+strong {
+  font-weight: bold;
+}
+
+button {
+  padding: 10px 15px;
+  border-radius: 30px;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+/* || Top Level Section Styles */
+nav {
+  padding: 20px 40px;
+  background-color: #333333;
+  color: white;
+  font-weight: 600;
+  font-size: 1.7rem;
+}
+
+header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  max-width: 1220px;
+  margin: auto;
+  padding: 0px 40px;
+}
+
+main {
+  margin: auto;
+  padding: 40px;
+  max-width: 1220px;
+}
+
+footer {
+  min-height: 100px;
+}
+
+/* || Header Section Styles */
+#welcome {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+  min-height: 300px;
+  padding-top: 50px;
+}
+
+header h1 {
+  font-size: 2.8rem;
+  font-weight: bolder;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+}
+
+#workoutImage {
+  max-width: 70%;
+  align-self: flex-end;
+}
+
+/* || Container Styling */
+.main-container + .main-container {
+  padding-top: 40px;
+}
+
+.content-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  min-height: 180px;
+  border-radius: 40px;
+}
+
+#past-activity .content-container {
+  background-color: #53e0cd;
+}
+
+#future-activity .content-container {
+  background-color: #b1bab9;
+}
+
+.container-title {
+  font-size: 1.3rem;
+  font-weight: bolder;
+  margin-bottom: 0.6rem;
+}
+
+/* view progress */
+#pAct-wrapper {
+  display: flex;
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+#view-progress {
+  margin-left: 7px;
+}
+
+.blk-button {
+  color: white;
+  background-color: #333333;
+  font-weight: bold;
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+  font-size: 0.9rem;
+  min-width: 120px;
+}
+
+/* Reminder */
+#reminder-container {
+  background-color: #5267D9;
+  display: none; /* change to display: flex when there is a reminder */
+  flex-direction: column;
+  padding: 10px;
+}
+
+#reminder {
+  font-weight: 800;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  margin-right: 50px;
+}
+
+#reminder-wrap { /*contains #reminder-text and #reminder-button */
+  display: flex;
+  align-content: center;
+  max-width: 330px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+#reminder-text {
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  min-width: 200px;
+}
+
+.reminder-button {
+  background-color: #5267D9;
+  color: white;
+  font-weight: bold;
+  text-decoration: underline;
+  padding: 5px;
+  margin-right: 20px;
+}
+
+@media only screen and (min-width: 768px) {
+  #reminder-container {
+    flex-direction: row;
+  }
+  #reminder-wrap {
+    max-width: 500px;
+  }
+  #reminder-text {
+    margin-right: 60px;
+  }
+  .reminder-button {
+    margin-right: 30px;
+  }
+}
+
+/* Chart Overlay */
+#overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  /*overflow: auto;*/
+}
+#overlay-content {
+  background-color: #f2f2f2;
+  margin: 10% auto;
+  width: 80%;
+  height: fit-content;
+  padding: 20px;
+  max-height: 700px;
+  min-height: 520px;
+}
+#close {
+  /*display: flex;
+  justify-content: right;*/
+  float: right;
+  font-size: 40px;
+}
+#close:hover{
+  cursor: pointer;
+}
+#overlay-inputs{
+  margin-top: 50px;
+  font-weight: bold;
+  display: grid;
+  justify-items: center;
+}
+@media only screen and (max-width: 365px){ /*for small mobiles*/
+  #overlay-inputs{
+    font-size: 0.85rem
+  }
+}
+#oAct-activity, #oAct-date {
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+  margin: 5px;
+}
+#go-button-wrap{
+  display: flex;
+  justify-content: center;
+  padding-bottom: 20px;
+  padding-top: 20px;
+}
+#chart-anchor {
+  margin: auto; /* center the chart */
+  max-width: 550px; /* make smaller */
+}
+
+@media only screen and (min-width: 720px) {
+  #overlay-inputs{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .o-input{
+    display: flex;
+    align-items:center;
+    margin-right: 15px;
+  }
+}
+
+/* || Start Form Styles */
+#pAct-Add p,
+#fAct-Add p {
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.addBtn {
+  color: black;
+  background-color: #fff;
+  font-weight: bold;
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* || Form Styles */
+.form-label {
+  font-weight: bold;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: baseline;
+  align-items: center;
+}
+
+.hide {
+  display: none;
+}
+
+.pseudoform {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+label,
+.form-label,
+.form-button {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+}
+
+label {
+  font-weight: bold;
+}
+
+input {
+  height: 20px;
+  padding: 10px;
+  font-weight: normal;
+}
+
+select {
+  height: 40px;
+  font-weight: normal;
+  padding: 0 10px;
+}
+
+#activity-for-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+
+#activity-for-wrapper > .form-label {
+  padding-bottom: 10px;
+}
+
+#scalar-unit-wrapper {
+  display: flex;
+  flex-direction: row;
+  max-width: 300px;
+}
+
+#label-scalar,
+#label-units {
+  flex: 1;
+}
+
+#label-scalar > input,
+#label-units > input {
+  width: 80%;
+}
+
+/* || Remove Calendar logo */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-inner-spin-button {
+  display: none;
+}
+
+.form-button {
+  align-self: center;
+  color: white;
+  background-color: #333333;
+  padding-left: 45px;
+  padding-right: 45px;
+}
+
+@media only screen and (min-width: 768px) {
+  .pseudoform {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  label,
+  .form-label,
+  .form-button {
+    margin: 10px 15px;
+  }
+  .form-button {
+    align-self: flex-end;
+    margin: 10px 30px;
+  }
+}
+
+@media only screen and (min-width: 960px) {
+  #workoutImage {
+    position: absolute;
+    right: 0;
+    max-height: 350px;
+  }
+
+  label,
+  .form-label {
+    margin: 10px 20px;
+  }
+  .form-button {
+    margin: 10px 30px;
+  }
+}
