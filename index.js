@@ -75,6 +75,7 @@ app.get('/*',express.static('public'));
 app.get('/logout', function(req, res){
   req.logout();
   res.redirect('/');
+  console.log("Successfully logged out!")
 });
 
 // next, handler for url that starts login with Google.
@@ -252,7 +253,15 @@ function gotProfile(accessToken, refreshToken, profile, done) {
     // should be key to get user out of database.
     usrProfile = profile; //global var: used to display name on hidden page
     let userid = profile.id;  
-    console.log("userId: "+profile.displayName);
+    let firstName = profile.name['givenName'];
+    console.log("gotProfile");
+
+    //check if user is in DB. If not, store in DB
+    dbo.insertProfile(userid, firstName)
+    .then(()=> console.log("insertProfile success")) 
+    .catch(function(error){
+      console.log("error in insertProfile:", error);}
+    );
 
     done(null, userid); 
 }

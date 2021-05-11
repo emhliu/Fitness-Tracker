@@ -29,9 +29,33 @@ function createActivityTable() {
   const cmd = 'CREATE TABLE ActivityTable (rowIdNum INTEGER PRIMARY KEY, activity TEXT, date INTEGER, amount FLOAT)';
   db.run(cmd, function(err, val) {
     if (err) {
-      console.log("Database creation failure",err.message);
+      console.log("Database creation failure (ActivityTable)",err.message);
     } else {
-      console.log("Created database");
+      console.log("Created database (ActivityTable)");
+    }
+  });
+}
+
+// check if database exists
+let cmd2 = " SELECT name FROM sqlite_master WHERE type='table' AND name='ProfileTable' ";
+
+db.get(cmd2, function (err, val) {
+  if (val == undefined) {
+        console.log("No database file - creating one (Profile)");
+        createProfileTable();
+  } else {
+        console.log("Database file found (Profile)");
+  }
+});
+
+// called to create table if needed
+function createProfileTable() {
+  const cmd2 = 'CREATE TABLE ProfileTable (rowIdNum INTEGER PRIMARY KEY, userid INTEGER, name TEXT)';
+  db.run(cmd2, function(err, val) {
+    if (err) {
+      console.log("Database creation failure (ProfileTable)",err.message);
+    } else {
+      console.log("Created database (ProfileTable)");
     }
   });
 }

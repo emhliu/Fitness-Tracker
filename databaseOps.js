@@ -151,7 +151,27 @@ async function getChartData (date, activity) {
   //console.log(all); 
 }
 
+// SQL commands for ProfileTable
+const insertP = "insert into ProfileTable (userid, name) values (?,?)"
+const selectId = "SELECT * FROM ProfileTable WHERE userid = ?"
+async function insertProfile (userid, name) {
+  let before = await db.all("select * from ProfileTable");
+  console.log("before:", before);
+
+  //if not in DB, insert it
+  let matchingId = await db.all(selectId,[userid]);
+  console.log("matchingId:", matchingId);
+  if (matchingId.length == 0){
+    await db.run(insertP,[userid, name]);
+  }
+
+  let after = await db.all("select * from ProfileTable");
+  console.log("after: ",after);
+}
+
+
 module.exports.testDB = testDB;
 module.exports.insertActivity = insertActivity;
 module.exports.getReminder = getReminder;
 module.exports.getChartData = getChartData;
+module.exports.insertProfile = insertProfile;
