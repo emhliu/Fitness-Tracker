@@ -154,6 +154,8 @@ async function getChartData (date, activity) {
 // SQL commands for ProfileTable
 const insertP = "insert into ProfileTable (userid, name) values (?,?)"
 const selectId = "SELECT * FROM ProfileTable WHERE userid = ?"
+const deleteP = "delete from ProfileTable"
+
 async function insertProfile (userid, name) {
   let before = await db.all("select * from ProfileTable");
   console.log("before:", before);
@@ -169,9 +171,16 @@ async function insertProfile (userid, name) {
   console.log("after: ",after);
 }
 
+async function getName (userid) {
+  let matchingId = await db.get(selectId,[userid]);
+  let name = matchingId['name'];
+  return name;
+}
+
 
 module.exports.testDB = testDB;
 module.exports.insertActivity = insertActivity;
 module.exports.getReminder = getReminder;
 module.exports.getChartData = getChartData;
 module.exports.insertProfile = insertProfile;
+module.exports.getName = getName;

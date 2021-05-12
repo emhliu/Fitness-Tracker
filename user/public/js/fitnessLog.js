@@ -26,6 +26,20 @@ let offsetObj = {offset: offset_ms};
     console.error('/timezone Error:', error);
   });
 
+/* Get user's name and display it */
+console.log("sending GET request to /name")
+fetch('/name', { 
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => {return response.json();}) 
+  .then(data => {
+    console.log("received /name response");
+    document.getElementById('username').textContent = data['name'];
+  })
+  .catch(error => {console.log("error:", error);})
 
 /* Set default date in forms to current date */
 document.getElementById('pAct-date').valueAsDate = newUTCDate()

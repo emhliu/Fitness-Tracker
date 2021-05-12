@@ -50,7 +50,7 @@ db.get(cmd2, function (err, val) {
 
 // called to create table if needed
 function createProfileTable() {
-  const cmd2 = 'CREATE TABLE ProfileTable (rowIdNum INTEGER PRIMARY KEY, userid INTEGER, name TEXT)';
+  const cmd2 = 'CREATE TABLE ProfileTable (userid TEXT PRIMARY KEY, name TEXT)';
   db.run(cmd2, function(err, val) {
     if (err) {
       console.log("Database creation failure (ProfileTable)",err.message);

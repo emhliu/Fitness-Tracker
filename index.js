@@ -114,7 +114,8 @@ app.get('/auth/accepted',
 
       // tell browser to get the hidden main page of the app
       console.log("Request Body: "+JSON.stringify(req.body));
-	    res.redirect(`/public/index.html?userName=${usrProfile.name['givenName']}`); 
+      res.redirect(`/public/index.html`); 
+	    /*res.redirect(`/public/index.html?userName=${usrProfile.name['givenName']}`); */
       //in /user ??
       //?userName= query string
 	});
@@ -133,6 +134,12 @@ app.get('/query', isAuthenticated,
     function (req, res) { 
       console.log("saw query");
       res.send('HTTP query!') });
+
+app.get('/name', isAuthenticated,
+  function(req, res, next){
+    console.log("received GET request for /name");
+    res.send(req.user);
+});
 
 var offset = 0;
 app.post('/timezone', isAuthenticated,
@@ -258,10 +265,10 @@ function gotProfile(accessToken, refreshToken, profile, done) {
 
     //check if user is in DB. If not, store in DB
     dbo.insertProfile(userid, firstName)
-    .then(()=> console.log("insertProfile success")) 
-    .catch(function(error){
-      console.log("error in insertProfile:", error);}
-    );
+      .then(()=> console.log("insertProfile success")) 
+      .catch(function(error){
+        console.log("error in insertProfile:", error);}
+      );
 
     done(null, userid); 
 }
@@ -284,7 +291,14 @@ passport.deserializeUser((userid, done) => {
     // here is a good place to look up user data in database using
     // dbRowID. Put whatever you want into an object. It ends up
     // as the property "user" of the "req" object. 
-    let userData = {userData: "data from user's db row goes here"};
-    done(null, userData);
+
+    let userData;
+    dbo.getName(userid)
+      .then((data)=> {
+        userData = {name: data};
+        done(null, userData);
+        })
+      .catch((error)=> console.log("error in deserializeUser: ",error));
 });
+
 
