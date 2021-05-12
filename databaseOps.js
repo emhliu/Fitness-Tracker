@@ -10,6 +10,7 @@ const allDB = "select * from ActivityTable where activity = ?";
 const getPastAct = "select * from ActivityTable where NOT amount = -1 and activity = ? and date = ?";
 // delete all planned activities before a certain date
 const deletePast = "delete from ActivityTable where amount = -1 and date<?";
+const getPlanned = "select * from ActivityTable where amount = -1 and userid = ? ORDER BY date ASC"
 
 async function testDB () {
 
@@ -45,10 +46,10 @@ async function insertActivity (date, activity, scalar, offset, userid) {
 
   //testing: print all in db
   let result = await db.all("select * from ActivityTable");
-  console.log(result);
+  console.log('all of db:',result);
 }
 
-async function getReminder (offset) {
+async function getReminder (offset, userid) {
   const today = new Date();
   today.setHours(0,0,0,0);
   var yesterday = new Date(today);
@@ -58,7 +59,7 @@ async function getReminder (offset) {
   weekBefore.setDate(weekBefore.getDate() - 7); 
 
   // pull out all planned activities from the database (amount=-1) 
-  let allPlanned = await db.all("select * from ActivityTable where amount = -1 ORDER BY date ASC");
+  let allPlanned = await db.all(getPlanned,[userid]);
 
   //await db.deleteEverything();
   var remindObj = "";

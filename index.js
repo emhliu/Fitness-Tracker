@@ -155,7 +155,8 @@ app.post('/timezone', isAuthenticated,
 app.get('/reminder', isAuthenticated,
   function(request, response, next){
     console.log("received GET request for /reminder");
-    dbo.getReminder(offset)
+    let userid = request.user['userid'];
+    dbo.getReminder(offset, userid) 
     .then(function(data){
       response.send(data);
     }) 
