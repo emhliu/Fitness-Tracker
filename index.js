@@ -292,10 +292,11 @@ passport.deserializeUser((userid, done) => {
     // dbRowID. Put whatever you want into an object. It ends up
     // as the property "user" of the "req" object. 
 
-    let userData;
+    let userData = {userid: userid};
     dbo.getName(userid)
       .then((data)=> {
-        userData = {name: data};
+        userData.name = data;
+        console.log(userData);
         done(null, userData);
         })
       .catch((error)=> console.log("error in deserializeUser: ",error));
