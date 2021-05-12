@@ -26,7 +26,7 @@ db.get(cmd, function (err, val) {
 function createActivityTable() {
   // explicitly declaring the rowIdNum protects rowids from changing if the 
   // table is compacted; not an issue here, but good practice
-  const cmd = 'CREATE TABLE ActivityTable (rowIdNum INTEGER PRIMARY KEY, activity TEXT, date INTEGER, amount FLOAT)';
+  const cmd = 'CREATE TABLE ActivityTable (rowIdNum INTEGER PRIMARY KEY, activity TEXT, date INTEGER, amount FLOAT, userid TEXT)';
   db.run(cmd, function(err, val) {
     if (err) {
       console.log("Database creation failure (ActivityTable)",err.message);

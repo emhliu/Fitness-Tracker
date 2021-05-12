@@ -175,14 +175,13 @@ app.post('/store', isAuthenticated,
       message: "I recieved your POST request at /store"
     });
     //insert data received into database as a row
-    console.log(offset);
     if(request.body.scalar === undefined){ //is future activity
-      dbo.insertActivity(request.body.date, request.body.activity, -1, offset).catch(
+      dbo.insertActivity(request.body.date, request.body.activity, -1, offset,request.user['userid']).catch(
       function (error) {
       console.log("error:",error);}
       );
     } else{ //is past activity
-        dbo.insertActivity(request.body.date, request.body.activity, request.body.scalar, offset).catch(
+        dbo.insertActivity(request.body.date, request.body.activity, request.body.scalar, offset, request.user['userid']).catch(
         function (error) {
         console.log("error:",error);}
       );
@@ -292,11 +291,11 @@ passport.deserializeUser((userid, done) => {
     // dbRowID. Put whatever you want into an object. It ends up
     // as the property "user" of the "req" object. 
 
-    let userData = {userid: userid};
+    let userData = {'userid': userid};
     dbo.getName(userid)
       .then((data)=> {
         userData.name = data;
-        console.log(userData);
+        console.log('req.user:',userData);
         done(null, userData);
         })
       .catch((error)=> console.log("error in deserializeUser: ",error));

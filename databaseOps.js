@@ -4,7 +4,7 @@
 const db = require('./sqlWrap');
 
 // SQL commands for ActivityTable
-const insertDB = "insert into ActivityTable (activity, date, amount) values (?,?,?)"
+const insertDB = "insert into ActivityTable (activity, date, amount, userid) values (?,?,?,?)"
 const getOneDB = "select * from ActivityTable where activity = ? and date = ? and amount = ?";
 const allDB = "select * from ActivityTable where activity = ?";
 const getPastAct = "select * from ActivityTable where NOT amount = -1 and activity = ? and date = ?";
@@ -36,12 +36,12 @@ async function testDB () {
   console.log(result);
 }
 
-async function insertActivity (date, activity, scalar, offset) { 
+async function insertActivity (date, activity, scalar, offset, userid) { 
   //await db.deleteEverything(); //temp
   // add offset to get correct milliseconds that client entered
   // UTC --> local time
   const inDate = new Date(date.split("-")).getTime() + offset;
-  await db.run(insertDB,[activity, inDate, scalar]); 
+  await db.run(insertDB,[activity, inDate, scalar, userid]); 
 
   //testing: print all in db
   let result = await db.all("select * from ActivityTable");
