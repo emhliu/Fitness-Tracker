@@ -1,2 +1,2 @@
-## Group Members
-- Emily Liu
+## Author
+Emily Liu
