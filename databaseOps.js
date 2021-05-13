@@ -5,12 +5,17 @@ const db = require('./sqlWrap');
 
 // SQL commands for ActivityTable
 const insertDB = "insert into ActivityTable (activity, date, amount, userid) values (?,?,?,?)"
+
 const getOneDB = "select * from ActivityTable where activity = ? and date = ? and amount = ?";
+
 const allDB = "select * from ActivityTable where activity = ?";
+
 const getPastAct = "select * from ActivityTable WHERE userid = ? AND NOT amount = -1 and activity = ? and date = ?";
+
 // delete all planned activities before a certain date
-const deletePast = "delete from ActivityTable where amount = -1 and date<?";
-const getPlanned = "select * from ActivityTable where amount = -1 and userid = ? ORDER BY date ASC"
+const deletePast = "delete from ActivityTable where amount = -1 and date <= ?";
+
+const getRecentPlanned = "SELECT * FROM ActivityTable WHERE amount = -1 AND userid = ? AND date BETWEEN ? AND ? ORDER BY date DESC LIMIT 1"
 
 const getRecentEntered = "SELECT * FROM ActivityTable WHERE userid = ? ORDER BY rowIdNum DESC LIMIT 1"
 
@@ -52,56 +57,39 @@ async function insertActivity (date, activity, scalar, offset, userid) {
 }
 
 async function getReminder (offset, userid) {
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  let yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-  let yestMil = yesterday.getTime() + offset;
-  console.log("yesterday:",yestMil);
-  let weekBefore = new Date(today); 
-  weekBefore.setDate(weekBefore.getDate() - 7);
-  
-  //weekBefore.setHours(0,0,0,0); //added
+  let result = await db.all("select * from ActivityTable");
+  console.log('all of db:',result);
 
-  // pull out all planned activities from the database (amount=-1) 
-  let allPlanned = await db.all(getPlanned,[userid]);
+  let today = new Date(); //today in UTC
+  //console.log("today UTC:", today.getTime()); 
+  let todayLocalMil = today.getTime() - offset;
+  let todayLocal = new Date(todayLocalMil);
+  //console.log("today local:", todayLocal, todayLocalMil);
+  todayLocal.setHours(0,0,0,0);
+  let finalToday = todayLocal.getTime() + offset; //today in Local
+  console.log("finalToday:", finalToday);
 
-  //await db.deleteEverything();
-  var remindObj = "";
-  let i = 0;
-  let index = -1;
-  let recentDate = JSON.parse(JSON.stringify(allPlanned), (key, value) => {
-    if (key == 'date'){ 
-      if(value < yestMil){
-        index = i;
-        remindObj = allPlanned[i];
-      }
-      i++;
-    }
-  });
 
-  //no reminder needed
-  if (index == -1){
-    console.log("exit: no reminder");
-    return false;
-  }
+  let yesterdayMil = finalToday - 86400000; //yesterday 00:00:00 local time
+  console.log("yesterday:",yesterdayMil);
 
-  /**
-   *  get date from object and return false if date scheduled
-   * is from more than a week weekBefore
-   */
-  var dateArr = Object.entries(remindObj);
-  // gets date from object
-  dateArr = dateArr[2][1];
-  // date is more than a week old
-  if(dateArr < weekBefore){
-    console.log("exit: reminder too old");
-    return false;
-  }
+  let weekBeforeMil = finalToday - 7*86400000; //added
+  console.log('weekBefore:',weekBeforeMil); 
+
+  let recentPlanned = await db.get(getRecentPlanned, [userid, weekBeforeMil, yesterdayMil]);
+
+  console.log("Recent planned:", recentPlanned);
 
   // delete planned activities (before today)
-  await db.run(deletePast, [yestMil]);
-  return remindObj;
+  await db.run(deletePast, [yesterdayMil]);
+
+  if (recentPlanned == undefined){ 
+    // no reminder needed: no activity found of correct dates
+    console.log("exit: no reminder");
+    return false;
+  } else {
+    return recentPlanned;
+  }
 }
 
 async function getChartData (date, activity, userid) {
