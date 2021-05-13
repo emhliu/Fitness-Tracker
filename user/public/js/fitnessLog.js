@@ -51,6 +51,10 @@ reminder_button_yes.addEventListener("click", reminder_yes);
 function reminder_yes(){
   add_past_activity_onclick();
   hide_reminder();
+  //prefill date and activity
+  console.log("remind data:",remind_data);
+  document.getElementById('pAct-activity').value = remind_data['activity'];
+  document.getElementById('pAct-date').valueAsDate = remind_data['date'];
 }
 let reminder_button_no = document.getElementById("reminder-no")
 reminder_button_no.addEventListener("click", hide_reminder);
@@ -58,6 +62,7 @@ function hide_reminder(){
   document.getElementById("reminder-container").style.display = 'none';
 }
 
+let remind_data = {'activity':null, 'date':null}; //global variable to use in remind_button_yes
 /* Reminder GET request */
 console.log("sending GET request to /reminder")
 fetch('/reminder', { 
@@ -74,9 +79,13 @@ fetch('/reminder', {
     document.getElementById("reminder-container").style.display = 'flex'; 
     document.getElementById("reminder-activity").textContent = data["activity"];
 
+    remind_data.activity = data["activity"];
+
     console.log(data["date"]);
     let date = new Date(data["date"]);
     console.log("date",date);
+
+    remind_data.date = date;
 
     if(date.getTime() != yesterday()){
       let days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -99,8 +108,6 @@ function show_overlay() {
   /* Chart Info GET request: DEFAULT 
      date = yesterday, activity = '' */
   getChart(yesterday(),'');
-  //prefill input boxes?
-
 }
 
 function yesterday(){ //in milliseconds
