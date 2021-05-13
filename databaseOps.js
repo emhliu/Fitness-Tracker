@@ -7,10 +7,12 @@ const db = require('./sqlWrap');
 const insertDB = "insert into ActivityTable (activity, date, amount, userid) values (?,?,?,?)"
 const getOneDB = "select * from ActivityTable where activity = ? and date = ? and amount = ?";
 const allDB = "select * from ActivityTable where activity = ?";
-const getPastAct = "select * from ActivityTable where NOT amount = -1 and activity = ? and date = ?";
+const getPastAct = "select * from ActivityTable WHERE userid = ? AND NOT amount = -1 and activity = ? and date = ?";
 // delete all planned activities before a certain date
 const deletePast = "delete from ActivityTable where amount = -1 and date<?";
 const getPlanned = "select * from ActivityTable where amount = -1 and userid = ? ORDER BY date ASC"
+
+const getRecentEntered = "SELECT * FROM ActivityTable WHERE userid = ? ORDER BY rowIdNum DESC LIMIT 1"
 
 async function testDB () {
 
@@ -52,11 +54,14 @@ async function insertActivity (date, activity, scalar, offset, userid) {
 async function getReminder (offset, userid) {
   const today = new Date();
   today.setHours(0,0,0,0);
-  var yesterday = new Date(today);
+  let yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
-  var yestMil = yesterday.getTime() + offset;
-  var weekBefore = new Date(today);
-  weekBefore.setDate(weekBefore.getDate() - 7); 
+  let yestMil = yesterday.getTime() + offset;
+  console.log("yesterday:",yestMil);
+  let weekBefore = new Date(today); 
+  weekBefore.setDate(weekBefore.getDate() - 7);
+  
+  //weekBefore.setHours(0,0,0,0); //added
 
   // pull out all planned activities from the database (amount=-1) 
   let allPlanned = await db.all(getPlanned,[userid]);
@@ -99,7 +104,7 @@ async function getReminder (offset, userid) {
   return remindObj;
 }
 
-async function getChartData (date, activity) {
+async function getChartData (date, activity, userid) {
   // input: ending date(in milliseconds) and activity
   // output: array of objects (json?)
   // activity can be EMPTY ''
@@ -111,7 +116,7 @@ async function getChartData (date, activity) {
   let weekDataReversed = [null,null,null,null,null,null,null,null];
 
   if(activity == ''){ // use the most recently entered database entry's activity
-    let mostRecent = await db.all("SELECT * FROM ActivityTable ORDER BY rowIdNum DESC LIMIT 1");
+    let mostRecent = await db.all(getRecentEntered,[userid]);
     if(mostRecent.length == 0){
       activity = 'Walk';
     } else{
@@ -126,7 +131,7 @@ async function getChartData (date, activity) {
     //console.log(dayOfWeek);
 
     // can be none, or 1, or array of multiple entries 
-    let dayData = await db.all(getPastAct,[activity, dayOfWeek]); 
+    let dayData = await db.all(getPastAct,[userid, activity, dayOfWeek]); 
     //console.log(dayData);
 
     if(dayData.length == 1){ //array of 1 element

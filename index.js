@@ -195,8 +195,9 @@ app.get('/week', isAuthenticated,
     //extract query parameters
     let date = request.query.date;
     let activity = request.query.activity;
+    let userid = request.user['userid'];
     //get info from database
-    dbo.getChartData(date, activity) 
+    dbo.getChartData(date, activity, userid) 
     .then(function(data){
       response.send(data)
     })
